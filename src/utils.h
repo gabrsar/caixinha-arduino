@@ -19,7 +19,7 @@ void setupSwitch();
 void randomRant();
 void delayIfOff(int time);
 void slowCloseIfOff(int totalTime);
-void slowOpenDoorIfOn(int totalTime, int openAngle);
+void slowOpenDoorIfOn(int totalTime);
 void slowRetractIfOff(int totalTime);
 bool attacked();
 

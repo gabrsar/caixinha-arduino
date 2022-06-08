@@ -82,25 +82,54 @@ void delayIfOff(int time)
 
 void slowCloseIfOff(int totalTime)
 {
-  int currentAngle = doorState();
-  int dA = currentAngle - DOOR_REST_ANGLE;
-  int usedDelay = (totalTime / dA);
-  int left = dA;
-  for (int s = 0; s < dA && !attacked(); s++, left--)
+  if (totalTime > 200)
   {
-    Serial.println(currentAngle - s);
-    sDoor(currentAngle - s);
-    delay(usedDelay);
+    int currentAngle = doorState();
+    int dA = currentAngle - DOOR_REST_ANGLE;
+    int usedDelay = (totalTime / dA);
+    int left = dA;
+    for (int s = 0; s < dA && !attacked(); s++, left--)
+    {
+      Serial.println(currentAngle - s);
+      sDoor(currentAngle - s);
+      delay(usedDelay);
+    }
+    Serial.println(left);
+    if (left == 0)
+    {
+      sDoor(DOOR_REST_ANGLE);
+    }
   }
-  Serial.println(left);
-  if (left == 0)
+  else
   {
     sDoor(DOOR_REST_ANGLE);
   }
 }
 
-void slowOpenDoorIfOn(int totalTime, int openAngle)
+void slowOpenDoorIfOn(int totalTime)
 {
+  if (totalTime > 200)
+  {
+    int currentAngle = doorState();
+    int dA = DOOR_ATTACK_ANGLE - currentAngle ;
+    int usedDelay = (totalTime / dA);
+    int left = dA;
+    for (int s = 0; s < dA && attacked(); s++, left--)
+    {
+      Serial.println(currentAngle + s);
+      sDoor(currentAngle + s);
+      delay(usedDelay);
+    }
+    Serial.println(left);
+    if (left == 0)
+    {
+      sDoor(DOOR_ATTACK_ANGLE);
+    }
+  }
+  else
+  {
+    sDoor(DOOR_ATTACK_ANGLE);
+  }
 }
 void slowRetractIfOff(int totalTime)
 {

@@ -2,6 +2,8 @@
 #include <Servo.h>
 #include <utils.h>
 
+#include <attacks/lookAndAttack.h>
+
 void setup()
 {
   Serial.begin(9600);
@@ -13,12 +15,8 @@ void setup()
 
 void loop()
 {
-  delay(1000);
-
+  delay(200);
   if(attacked()){
-    sDoor(DOOR_MAX_ATTACK_ANGLE);
-  }else{
-    slowCloseIfOff(10000);
+    lookAndAttack();
   }
-
 }
