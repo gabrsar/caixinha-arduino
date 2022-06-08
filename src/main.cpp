@@ -18,7 +18,7 @@ void loop()
   if(attacked()){
     sDoor(DOOR_MAX_ATTACK_ANGLE);
   }else{
-    slowCloseIfOff(1000);
+    slowCloseIfOff(10000);
   }
 
 }

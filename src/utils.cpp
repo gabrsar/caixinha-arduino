@@ -84,20 +84,19 @@ void slowCloseIfOff(int totalTime)
 {
   int currentAngle = doorState();
   int dA = currentAngle - DOOR_REST_ANGLE;
-  int steps = min(totalTime / MIN_SERVO_DELAY, dA);
-  int dS = dA / steps;
-  int angle = currentAngle;
-  int usedDelay = totalTime / steps;
-
-  Serial.println((String) "totalTime:" + totalTime + "; currentAngle:" + currentAngle + "; dA:" + dA + "; steps:" + steps + "; dS:" + dS + "; usedDelay:" + usedDelay);
-  for (int s = 0; s < steps && !attacked(); s++)
+  int usedDelay = (totalTime / dA);
+  int left = dA;
+  for (int s = 0; s < dA && !attacked(); s++, left--)
   {
-    angle = angle - dS;
-    Serial.println(angle);
-    sDoor(angle);
+    Serial.println(currentAngle - s);
+    sDoor(currentAngle - s);
     delay(usedDelay);
   }
-  sDoor(DOOR_REST_ANGLE);
+  Serial.println(left);
+  if (left == 0)
+  {
+    sDoor(DOOR_REST_ANGLE);
+  }
 }
 
 void slowOpenDoorIfOn(int totalTime, int openAngle)
