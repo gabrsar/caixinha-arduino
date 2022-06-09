@@ -18,7 +18,10 @@ void setupSwitch();
 
 void randomRant();
 void delayIfOff(int time);
+void delayIfOn(int time);
+
 void slowCloseIfOff(int totalTime);
+
 void slowOpenDoorIfOn(int totalTime);
 void slowRetractIfOff(int totalTime);
 bool attacked();
@@ -28,4 +31,6 @@ int doorState();
 void sArm(int angle);
 void sDoor(int angle);
 
-void tatataTata();
+void tatatatataTaTa();
+
+void note();

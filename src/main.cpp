@@ -3,6 +3,9 @@
 #include <utils.h>
 
 #include <attacks/lookAndAttack.h>
+#include <attacks/letThemThinkTheyWinAttack.h>
+
+#include <attacks/rageRememberAttack.h>
 
 void setup()
 {
@@ -15,8 +18,8 @@ void setup()
 
 void loop()
 {
-  delay(200);
+  delay(100);
   if(attacked()){
-    lookAndAttack();
+    rageRememberAttack();
   }
 }

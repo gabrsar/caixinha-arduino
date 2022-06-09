@@ -42,13 +42,13 @@ void tatatatataTaTa()
   delay(100);
 
   note(1);
-  delay(200);
+  delay(150);
 
-  note(1);
+  note(2);
   delay(500);
 
   note(3);
-  delay(500);
+  delay(200);
 
   note(3);
 }
@@ -71,9 +71,18 @@ void randomRant()
   delay(400);
 }
 
-void delayIfOff(int time)
+void delayIfOn(int timeLenght)
 {
-  int steps = time / RACTION_DELAY_TIME;
+  int steps = timeLenght / RACTION_DELAY_TIME;
+  for (int i = 0; i < steps && attacked(); i++)
+  {
+    delay(RACTION_DELAY_TIME);
+  }
+}
+
+void delayIfOff(int timeLenght)
+{
+  int steps = timeLenght / RACTION_DELAY_TIME;
   for (int i = 0; i < steps && !attacked(); i++)
   {
     delay(RACTION_DELAY_TIME);
@@ -131,9 +140,32 @@ void slowOpenDoorIfOn(int totalTime)
     sDoor(DOOR_ATTACK_ANGLE);
   }
 }
+
 void slowRetractIfOff(int totalTime)
 {
+  if (totalTime > 200)
+  {
+    int currentAngle = armState();
+    int dA = currentAngle - ARM_REST_ANGLE;
+    int usedDelay = (totalTime / dA);
+    int left = dA;
+    for (int s = 0; s < dA && !attacked(); s--, left--)
+    {
+      sArm(currentAngle + s);
+      delay(usedDelay);
+    }
+    Serial.println(left);
+    if (left == 0)
+    {
+      sArm(ARM_REST_ANGLE);
+    }
+  }
+  else
+  {
+    sArm(ARM_REST_ANGLE);
+  }
 }
+
 bool attacked()
 {
   return digitalRead(PIN_SWITCH) == HIGH;
