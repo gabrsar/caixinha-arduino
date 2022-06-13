@@ -2,6 +2,8 @@
 #include "utils.h"
 
 void quickAttack(){
+  Serial.println("ATTACK! Quick!");
+
   int angleSpread = 20;
   int doorAngle = random(DOOR_ATTACK_ANGLE-angleSpread/2, DOOR_MAX_ATTACK_ANGLE+angleSpread/2);
   sDoor(doorAngle);

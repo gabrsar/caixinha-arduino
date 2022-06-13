@@ -2,6 +2,8 @@
 #include <Servo.h>
 #include "utils.h"
 
+typedef unsigned long ulong;
+
 Servo S_ARM;
 Servo S_DOOR;
 
@@ -91,15 +93,18 @@ void delayIfOff(int timeLenght)
 
 void slowCloseIfOff(int totalTime)
 {
+  Serial.print('FECHA SA PORRA');
   if (totalTime > 200)
   {
     int currentAngle = doorState();
     int dA = currentAngle - DOOR_REST_ANGLE;
     int usedDelay = (totalTime / dA);
     int left = dA;
+    Serial.println((String) "ANGULO PORTA:" + (currentAngle) + " delay=" + usedDelay + " dA=" + dA);
+
     for (int s = 0; s < dA && !attacked(); s++, left--)
     {
-      Serial.println(currentAngle - s);
+      Serial.println((String) "ANGULO PORTA:" + (currentAngle - s));
       sDoor(currentAngle - s);
       delay(usedDelay);
     }
@@ -120,7 +125,7 @@ void slowOpenDoorIfOn(int totalTime)
   if (totalTime > 200)
   {
     int currentAngle = doorState();
-    int dA = DOOR_ATTACK_ANGLE - currentAngle ;
+    int dA = DOOR_ATTACK_ANGLE - currentAngle;
     int usedDelay = (totalTime / dA);
     int left = dA;
     for (int s = 0; s < dA && attacked(); s++, left--)
@@ -141,6 +146,48 @@ void slowOpenDoorIfOn(int totalTime)
   }
 }
 
+void forceOff(int waitTime){
+  ulong endTime = millis()+waitTime;
+  while(millis() < endTime){
+    if(attacked()){
+      sArm(ARM_ATTACK_ANGLE*0.8);
+      delay(200);
+      sArm(ARM_ATTACK_ANGLE);
+      delay(200);
+    }
+  }
+}
+
+void moveArmIf(bool (*conditionPtr)(), int startAngle, int finalAngle, int duration)
+{
+  moveIf(conditionPtr, S_ARM, startAngle, finalAngle, duration);
+}
+void moveDoorIf(bool (*conditionPtr)(), int startAngle, int finalAngle, int duration)
+{
+  moveIf(conditionPtr, S_DOOR, startAngle, finalAngle, duration);
+}
+
+void moveIf(bool (*conditionPtr)(), Servo s, int startAngle, int finalAngle, int duration)
+{
+  bool shouldMove = (*conditionPtr)();
+  if (!shouldMove)
+  {
+    return;
+  }
+
+  int totalDeltaAngle = finalAngle - startAngle;
+  int currentAngle = s.read();
+  int waitPerMove = max(duration / abs(totalDeltaAngle), 1);
+  int signalToMove = finalAngle > startAngle ? 1 : -1;
+
+  for (; currentAngle != (finalAngle + signalToMove) && (*conditionPtr)(); currentAngle += signalToMove)
+  {
+
+    s.write(currentAngle);
+    delay(waitPerMove);
+  }
+}
+
 void slowRetractIfOff(int totalTime)
 {
   if (totalTime > 200)
@@ -149,7 +196,7 @@ void slowRetractIfOff(int totalTime)
     int dA = currentAngle - ARM_REST_ANGLE;
     int usedDelay = (totalTime / dA);
     int left = dA;
-    for (int s = 0; s < dA && !attacked(); s--, left--)
+    for (int s = 0; s > dA && !attacked(); s--, left--)
     {
       sArm(currentAngle + s);
       delay(usedDelay);
@@ -169,6 +216,11 @@ void slowRetractIfOff(int totalTime)
 bool attacked()
 {
   return digitalRead(PIN_SWITCH) == HIGH;
+}
+
+bool isOff()
+{
+  return !attacked();
 }
 
 int armState()

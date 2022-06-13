@@ -5,6 +5,7 @@ static int RAGE = 1;
 
 void laugh()
 {
+  // I couldn't contain my emotions muahaha
   sDoor(DOOR_REST_ANGLE * 0.3); // ha
   delay(200);
   sDoor(DOOR_REST_ANGLE * 0.9); // ha
@@ -15,12 +16,11 @@ void laugh()
 
 void letThemThinkTheyWinAttack()
 {
-
-  Serial.println(random(10000, 30000));
+  Serial.println("Let them Think they Win!");
 
   delay(1000);
 
-  if (random(1, 10) > 9)
+  if (random(1, 10) > 8)
   {
     laugh();
   }
